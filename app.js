@@ -8,6 +8,7 @@ const session = require("express-session");
 const bodyParser = require("body-parser");
 const User= require("./models/user");
 const Twit= require("twit");
+const twitter= require("twitter");
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 mongoose.connect(
@@ -26,7 +27,24 @@ passport.use(
     },
     (token, tokenSecret, profile, cb) => {
       //   User.findOrCreate({ twitterId: profile.id }, (err, user) => {
-      return cb(null, profile);
+        console.log(token, profile);
+        const T= new twitter({
+          consumer_key: "JAABlOt9wzw9dyr8SASkPjRrj",
+          consumer_secret: "ki0m1aFKtdYisdalDQUOHnfOS0EI5XC1Iez1xbhx0Htox2NwrI",
+          access_token: token,
+          access_token_secret: tokenSecret 
+        })
+        T.get("/statuses/mentions_timeline", {id: profile.id}, (err, tweets, res)=>{
+          if (!err)
+            {console.log(tweets)}
+            else {
+              console.log(err)
+            }
+        })
+      return cb(null, profile,token);
+
+      
+
       //   });
     }
   )
@@ -49,13 +67,13 @@ app.get(
     console.log("successful");
     const access=Object.values(Object.values(obj)[1])
     const user= req.user;
-    console.log(res)
-    const T= new Twit({
-      consumer_key: "JAABlOt9wzw9dyr8SASkPjRrj",
-      consumer_secret: "ki0m1aFKtdYisdalDQUOHnfOS0EI5XC1Iez1xbhx0Htox2NwrI",
-      access_token: access[0],
-      access_token_secret: access[1]
-    })
+    // console.log(req)
+    // const T= new twitter({
+    //   consumer_key: "JAABlOt9wzw9dyr8SASkPjRrj",
+    //   consumer_secret: "ki0m1aFKtdYisdalDQUOHnfOS0EI5XC1Iez1xbhx0Htox2NwrI",
+    //   access_token: access[0],
+    //   access_token_secret: access[1]
+    // })
     // console.log(user);
     User.exists({username:user.username}, (err, result)=>{
       if (!result){
@@ -74,13 +92,13 @@ app.get(
       }
       console.log(result)
     })
-    T.get("/statuses/mentions_timeline", {id: user.id}, (err, tweets, res)=>{
-      if (!err)
-        {console.log(tweets)}
-        else {
-          console.log(err)
-        }
-    })
+    // T.get("/statuses/mentions_timeline", {id: user.id}, (err, tweets, res)=>{
+    //   if (!err)
+    //     {console.log(tweets)}
+    //     else {
+    //       console.log(err)
+    //     }
+    // })
     // console.log(access);
     res.send(access);
   }
