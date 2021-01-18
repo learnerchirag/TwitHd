@@ -8,8 +8,10 @@ const session = require("express-session");
 const bodyParser = require("body-parser");
 const User= require("./models/user");
 const Twit= require("twit");
+
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
+
 mongoose.connect(
   "mongodb+srv://user1:user1@cluster0.tjwcz.mongodb.net/Project0?retryWrites=true&w=majority",
   { useNewUrlParser: true },
@@ -17,6 +19,9 @@ mongoose.connect(
     console.log("connected to db");
   }
 );
+
+
+
 passport.use(
   new Strategy(
     {
@@ -25,6 +30,15 @@ passport.use(
       callbackURL: "http://localhost:3000",
     },
     (token, tokenSecret, profile, cb) => {
+      // console.log('token secret: ',token, tokenSecret, profile);
+      // req.access_token = token;
+      // req.access_token_secret = tokenSecret;
+      console.log('passport strategy: ',token, tokenSecret, profile);
+      profile.access_token = token;
+      profile.access_token_secret = tokenSecret;
+      // console.log('access token: ', profile.access_token)
+      // next();
+      // return next();
       //   User.findOrCreate({ twitterId: profile.id }, (err, user) => {
       return cb(null, profile);
       //   });
@@ -49,12 +63,12 @@ app.get(
     console.log("successful");
     const access=Object.values(Object.values(obj)[1])
     const user= req.user;
-    console.log(res)
+    console.log('req acess tokens: ', req.access_token, req.access_token_secret);
     const T= new Twit({
       consumer_key: "JAABlOt9wzw9dyr8SASkPjRrj",
       consumer_secret: "ki0m1aFKtdYisdalDQUOHnfOS0EI5XC1Iez1xbhx0Htox2NwrI",
-      access_token: access[0],
-      access_token_secret: access[1]
+      access_token: req.user.access_token,
+      access_token_secret: req.user.access_token_secret
     })
     // console.log(user);
     User.exists({username:user.username}, (err, result)=>{
@@ -76,7 +90,7 @@ app.get(
     })
     T.get("/statuses/mentions_timeline", {id: user.id}, (err, tweets, res)=>{
       if (!err)
-        {console.log(tweets)}
+        {console.log('tweets: ', tweets)}
         else {
           console.log(err)
         }
