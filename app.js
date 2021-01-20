@@ -133,7 +133,7 @@ app.get(
 )
 
 app.get('/', (req, res) => {
-  T.post("/:prac/webhooks", {url:"https://serene-crag-19557.herokuapp.com/webhook/listen"}, (a, b)=>{
+  T.post(":prac/webhooks", {url:"https://serene-crag-19557.herokuapp.com/webhook/listen"}, (a, b)=>{
       console.log("webhooks", a, b)
     })
   res.send('Hey There!! I am here, Go to /login to proceed');
