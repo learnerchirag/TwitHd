@@ -58,7 +58,7 @@ passport.use(
     {
       consumerKey: process.env.apikey,
       consumerSecret: process.env.apisecret,
-      callbackURL: "https://localhost:3000/logged",
+      callbackURL: "https://serene-crag-19557.herokuapp.com/logged",
     },
     (token, tokenSecret, profile, cb) => {
       profile.access_token = token
