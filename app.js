@@ -127,16 +127,20 @@ app.get(
     }
       console.log(result)
     })
-    T.post(":prac/webhooks", {url:"https://serene-crag-19557.herokuapp.com/webhook/twitter"}, (a, b)=>{
-      console.log("webhooks", a, b)
-    })
-    // T.stream("statuses/filter", {track:"job"})
+    
 
   }
 )
 
 app.get('/', (req, res) => {
+  T.post("/:prac/webhooks", {url:"https://serene-crag-19557.herokuapp.com/webhook/listen"}, (a, b)=>{
+      console.log("webhooks", a, b)
+    })
   res.send('Hey There!! I am here, Go to /login to proceed');
+})
+
+app.post('/webhook/listen', (req, res) => {
+  console.log(req)
 })
 
 app.get("/login", passport.authenticate("twitter"))
