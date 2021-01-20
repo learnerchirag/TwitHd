@@ -44,7 +44,10 @@ const userActivityWebhook = twitterWebhooks.userActivity({
   environment: 'prac', //default : 'env-beta'
   app
 });
-userActivityWebhook.register();
+setTimeout(() => {
+  userActivityWebhook.register();
+}, 1000);
+
 
 const T= new Twit({
   consumer_key: process.env.apikey,
