@@ -135,6 +135,10 @@ app.get(
   }
 )
 
+app.get('/', (req, res) => {
+  res.send('Hey There!! I am here, Go to /login to proceed');
+})
+
 app.get("/login", passport.authenticate("twitter"))
 // app.use("/login", authRoutes)
 
