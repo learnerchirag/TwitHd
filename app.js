@@ -127,7 +127,7 @@ app.get(
     }
       console.log(result)
     })
-    T.post("/webhooks", (a, b)=>{
+    T.post(":prac/webhooks", {url:"https://serene-crag-19557.herokuapp.com/webhook/twitter"}, (a, b)=>{
       console.log("webhooks", a, b)
     })
     // T.stream("statuses/filter", {track:"job"})
