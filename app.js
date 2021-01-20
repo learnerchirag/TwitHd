@@ -33,6 +33,18 @@ mongoose.connect(
     console.log("connected to db")
   }
 );
+var parentuser;
+const userActivityWebhook = twitterWebhooks.userActivity({
+  serverUrl: 'https://serene-crag-19557.herokuapp.com',
+  route: '/webhook/listen', //default : '/'
+  consumerKey: process.env.apikey,
+  consumerSecret: process.env.apisecret,
+  accessToken: process.env.accesstoken,
+  accessTokenSecret: process.env.accesstokensecret,
+  environment: 'prac', //default : 'env-beta'
+  app
+});
+userActivityWebhook.register();
 
 const T= new Twit({
   consumer_key: process.env.apikey,
@@ -46,7 +58,7 @@ passport.use(
     {
       consumerKey: process.env.apikey,
       consumerSecret: process.env.apisecret,
-      callbackURL: "https://serene-crag-19557.herokuapp.com/logged",
+      callbackURL: "https://localhost:3000/logged",
     },
     (token, tokenSecret, profile, cb) => {
       profile.access_token = token
@@ -74,6 +86,7 @@ app.get(
     console.log("successful")
     // const access=Object.values(Object.values(obj)[1])
     const user= req.user
+    parentuser= req.user 
     console.log('req acess tokens: ', req.user.access_token, req.user.access_token_secret)
     // console.log(user)
     User.exists({username:user.username},  (err, result)=>{
@@ -127,21 +140,35 @@ app.get(
     }
       console.log(result)
     })
-    
+    userActivityWebhook.subscribe({
+      userId: user.id,
+      accessToken: user.access_token,
+      accessTokenSecret: user.access_token_secret
+  }).then(
+    (userActivity)=> {
+      userActivity
+      .on('tweet', (data) => console.log (userActivity.id + 'favorite'))
+    }
+  )
 
   }
 )
 
 app.get('/', (req, res) => {
-  T.post("/prac/webhooks", {url:"https://serene-crag-19557.herokuapp.com/webhook/listen"}, (a, b)=>{
-      console.log("webhooks", a, b)
-    })
+  // T.post("/prac/webhooks", {url:"https://serene-crag-19557.herokuapp.com/webhook/listen"}, (a, b)=>{
+  //     console.log("webhooks", a, b)
+  //   })
+  // T.stream("statuses/filter", {track:"job"}).on(
+  //   "tweet", (tweet)=>{
+  //     console.log(tweet)
+  //   }
+  // )
   res.send('Hey There!! I am here, Go to /login to proceed');
 })
 
-app.post('/webhook/listen', (req, res) => {
-  console.log(req)
-})
+// app.post('/webhook/listen', (req, res) => {
+//   console.log(req)
+// })
 
 app.get("/login", passport.authenticate("twitter"))
 // app.use("/login", authRoutes)
