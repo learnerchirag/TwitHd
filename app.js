@@ -20,8 +20,6 @@ mongoose.connect(
   }
 );
 
-
-
 passport.use(
   new Strategy(
     {
