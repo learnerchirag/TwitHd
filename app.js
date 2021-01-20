@@ -36,7 +36,7 @@ mongoose.connect(
 var parentuser;
 const userActivityWebhook = twitterWebhooks.userActivity({
   serverUrl: 'https://serene-crag-19557.herokuapp.com',
-  route: '/webhook/listen', //default : '/'
+  route: '/webhook/twitter', //default : '/'
   consumerKey: process.env.apikey,
   consumerSecret: process.env.apisecret,
   accessToken: process.env.accesstoken,
