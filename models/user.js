@@ -9,8 +9,24 @@ const userSchema= mongoose.Schema({
         type: String,
         required: true
     },
-    tweet: {
-        type: [String]
+    tweets: {
+        type: [
+            {
+                created_at: String,
+                text: String,
+                user: {
+                  id: Number,
+                  id_str: String,
+                  name: String,
+                  screen_name: String,
+                //   profile_background_image_url: String,
+                //   profile_image_url: String,
+                },
+                retweet_count: Number,
+                favorite_count: Number,
+              }
+            
+        ]
     }
     
 });
